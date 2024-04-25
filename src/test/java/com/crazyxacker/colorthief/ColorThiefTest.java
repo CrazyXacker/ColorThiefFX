@@ -16,39 +16,39 @@
  * available at http://lokeshdhakar.com/projects/color-thief/
  */
 
-package de.androidpit.colorthief.test;
+package com.crazyxacker.colorthief;
 
-import java.awt.image.BufferedImage;
+import com.crazyxacker.colorthief.MMCQ.ColorSpaceBox;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.imageio.ImageIO;
-
-import de.androidpit.colorthief.ColorThief;
-import de.androidpit.colorthief.MMCQ.CMap;
-import de.androidpit.colorthief.MMCQ.VBox;
-
-public class ColorThiefTest {
-
-    public static void main(String[] args) throws IOException {
-        ColorThiefTest test = new ColorThiefTest();
-
-        test.test("examples/img/photo1.jpg");
-        test.test("examples/img/photo2.jpg");
-        test.test("examples/img/photo3.jpg");
-
-        test.saveToHTMLFile("examples-test.html");
-
-        System.out.println("Finished.");
-    }
+public class ColorThiefTest extends Application {
 
     private StringBuilder sb;
 
-    private ColorThiefTest() {
+    public ColorThiefTest() {
         sb = new StringBuilder();
         printStyleHeader();
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        test(new File("./examples/img/photo1.jpg").toURL().toString());
+        test(new File("./examples/img/photo2.jpg").toURL().toString());
+        test(new File("./examples/img/photo3.jpg").toURL().toString());
+
+        saveToHTMLFile("examples-test.html");
+
+        System.out.println("Finished.");
+
+        Platform.exit();
     }
 
     /**
@@ -76,18 +76,18 @@ public class ColorThiefTest {
         sb.append("<h1>Image: &quot;").append(pathname).append("&quot</h1>");
         sb.append("<p><img src=\"").append(pathname).append("\" style=\"max-width:100%\"></p>");
 
-        BufferedImage img = ImageIO.read(new File(pathname));
+        Image img = new Image(pathname);
 
         // The dominant color is taken from a 5-map
         sb.append("<h2>Dominant Color</h2>");
-        CMap result = ColorThief.getColorMap(img, 5);
-        VBox dominantColor = result.vboxes.get(0);
+        ColorMap result = ColorThief.getColorMap(img, 5);
+        ColorSpaceBox dominantColor = result.boxes.get(0);
         printVBox(dominantColor);
 
         // Get the full palette
         sb.append("<h2>Palette</h2>");
         result = ColorThief.getColorMap(img, 10);
-        for (VBox vbox : result.vboxes) {
+        for (ColorSpaceBox vbox : result.boxes) {
             printVBox(vbox);
         }
     }
@@ -98,7 +98,7 @@ public class ColorThiefTest {
      * @param vbox
      *            the vbox
      */
-    private void printVBox(VBox vbox) {
+    private void printVBox(ColorSpaceBox vbox) {
         int[] rgb = vbox.avg(false);
 
         // Create color String representations

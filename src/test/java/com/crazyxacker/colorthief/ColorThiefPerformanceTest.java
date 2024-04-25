@@ -16,25 +16,26 @@
  * available at http://lokeshdhakar.com/projects/color-thief/
  */
 
-package de.androidpit.colorthief.test;
+package com.crazyxacker.colorthief;
 
-import java.awt.image.BufferedImage;
+import com.crazyxacker.colorthief.ColorMap;
+import com.crazyxacker.colorthief.ColorThief;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+
 import java.io.File;
 
-import javax.imageio.ImageIO;
-
-import de.androidpit.colorthief.ColorThief;
-import de.androidpit.colorthief.MMCQ.CMap;
-
-public class ColorThiefPerformanceTest {
-
+public class ColorThiefPerformanceTest extends Application {
     private static final int NUM_TESTS_WARMUP = 500;
     private static final int NUM_TESTS = 500;
 
-    public static void main(String[] args) throws Exception {
-        BufferedImage img1 = ImageIO.read(new File("examples/img/photo1.jpg"));
-        BufferedImage img2 = ImageIO.read(new File("examples/img/photo2.jpg"));
-        BufferedImage img3 = ImageIO.read(new File("examples/img/photo3.jpg"));
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Image img1 = new Image(new File("./examples/img/photo1.jpg").toURL().toString());
+        Image img2 = new Image(new File("./examples/img/photo2.jpg").toURL().toString());
+        Image img3 = new Image(new File("./examples/img/photo3.jpg").toURL().toString());
 
         // Warm up JIT
         System.out.println("Warming up...");
@@ -49,9 +50,11 @@ public class ColorThiefPerformanceTest {
         System.out.println(
                 "Total time = " + total + " ms / per image = " + ((double) total / NUM_TESTS / 3)
                         + " ms");
+
+        Platform.exit();
     }
 
-    private static void test(BufferedImage img1, BufferedImage img2, BufferedImage img3, int max) {
+    private static void test(Image img1, Image img2, Image img3, int max) {
         long sum = 0;
 
         for (int i = 0; i < max; i++) {
@@ -59,14 +62,14 @@ public class ColorThiefPerformanceTest {
                 System.out.println("Round " + (i + 1) + " of " + max + "...");
             }
 
-            CMap result = ColorThief.getColorMap(img1, 10);
-            sum += result.vboxes.size();
+            ColorMap result = ColorThief.getColorMap(img1, 10);
+            sum += result.boxes.size();
 
             result = ColorThief.getColorMap(img2, 10);
-            sum += result.vboxes.size();
+            sum += result.boxes.size();
 
             result = ColorThief.getColorMap(img3, 10);
-            sum += result.vboxes.size();
+            sum += result.boxes.size();
         }
 
         // The sum is calculated (and printed) so that the JIT doesn't think the

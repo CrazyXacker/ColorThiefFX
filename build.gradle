@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        maven { url 'https://nexus.gluonhq.com/nexus/content/repositories/releases' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'org.openjfx:javafx-plugin:0.1.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+
+apply plugin: 'org.openjfx.javafxplugin'
+
+group 'com.crazyxacker.colorthief'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://nexus.gluonhq.com/nexus/content/repositories/releases' }
+}
+
+compileJava.options.encoding = 'UTF-8'
+System.setProperty('file.encoding', 'UTF-8')
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+javafx {
+    version = '21'
+    modules = ['javafx.base', 'javafx.graphics']
+}
+
+dependencies {
+
+}
